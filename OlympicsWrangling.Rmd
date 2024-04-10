@@ -1,0 +1,32 @@
+---
+title: "OlympicsWrangling"
+author: "Cate Stacy"
+date: "2024-04-09"
+output: html_document
+---
+
+```{r include = FALSE}
+# This chunk just sets up some styling (eg: default size of our images)
+knitr::opts_chunk$set(
+  collapse = TRUE, 
+  warning = FALSE,
+  message = FALSE,
+  fig.height = 3, 
+  fig.width = 5,
+  fig.align = 'center')
+```
+
+```{r}
+library(tidyverse)
+
+Olympic_Athlete_Event_Results <- read_csv("Olympic_Athlete_Event_Results.csv")
+
+Olympic_Athlete_Bio <- read_csv("Olympic_Athlete_Bio.csv")
+```
+
+```{r}
+Olympics_Full <- Olympic_Athlete_Event_Results %>%
+  left_join(Olympic_Athlete_Bio, join_by(athlete_id, country_noc, athlete == name))
+
+Olympics_Full
+```
