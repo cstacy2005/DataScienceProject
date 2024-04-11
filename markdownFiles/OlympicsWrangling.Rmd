@@ -31,7 +31,8 @@ Olympic_Athlete_Bio <- read_csv("Olympic_Athlete_Bio.csv")
 Olympics_Full <- Olympic_Athlete_Event_Results %>%
   left_join(Olympic_Athlete_Bio, join_by(athlete_id, country_noc, athlete == name)) %>%
   mutate(olympicType = str_sub(edition, 5, str_length(edition))) %>%
-  mutate(year = str_sub(edition, 1, 4))
+  mutate(year = str_sub(edition, 1, 4)) %>% 
+  select(-special_notes,-description)
 
 Olympics_Full
 ```
