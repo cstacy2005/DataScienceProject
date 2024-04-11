@@ -19,14 +19,41 @@ knitr::opts_chunk$set(
 ```{r}
 library(tidyverse)
 
+# Both datasets are from this link: https://www.kaggle.com/datasets/josephcheng123456/olympic-historical-dataset-from-olympediaorg?select=Olympic_Athlete_Bio.csv
+
 Olympic_Athlete_Event_Results <- read_csv("Olympic_Athlete_Event_Results.csv")
 
 Olympic_Athlete_Bio <- read_csv("Olympic_Athlete_Bio.csv")
+ 
 ```
 
 ```{r}
 Olympics_Full <- Olympic_Athlete_Event_Results %>%
-  left_join(Olympic_Athlete_Bio, join_by(athlete_id, country_noc, athlete == name))
+  left_join(Olympic_Athlete_Bio, join_by(athlete_id, country_noc, athlete == name)) %>%
+  mutate(olympicType = str_sub(edition, 5, str_length(edition))) %>%
+  mutate(year = str_sub(edition, 1, 4))
 
 Olympics_Full
+```
+
+```{r}
+FemaleRepresentation <- Olympics_Full %>%
+  group_by(edition, country) %>%
+  summarize(numAthletes = n(), females = sum(sex == "Female"), males = sum(sex == "Male"), 
+            percentFemale = (round(females/numAthletes * 100, 2)))
+
+FemaleRepresentation
+
+MostFemales <- FemaleRepresentation %>%
+  filter(numAthletes > 20) %>%
+  arrange(desc(percentFemale))
+
+MostFemales
+```
+
+```{r}
+USChange <- FemaleRepresentation %>%
+  filter(country == "United States")
+
+ggplot(USChange, aes(x = edition, y = percentFemale)) + geom_point() + theme(axis.text.x = element_text(angle = 90))
 ```
