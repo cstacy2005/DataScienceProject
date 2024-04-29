@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 ```{css, echo=FALSE}
+/*add the Olympic logo above the table of contents*/
 #TOC::before {
   content: "";
   display: block;
@@ -25,8 +26,8 @@ knitr::opts_chunk$set(
   background-position: center center;
   background-repeat: no-repeat;
 }
-.list-group-item.active{
-    z-index: 5;
+/*override the default style settings for the contents bar*/
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover{
     color: black;
     background-color: lightgray;
     border-color: lightgray;
@@ -40,6 +41,7 @@ knitr::opts_chunk$set(
     background: transparent;
     border: 1px solid #ddd;
 }
+/*set the colors of the specific tabs when they aren't active*/
 #tocify-header1 {
     background: dodgerblue;
     color: white;
@@ -60,8 +62,7 @@ knitr::opts_chunk$set(
     background: crimson;
     color: white;
 }
-
-
+/*add more tabs if needed later*/
 ```
 
 # Intro
