@@ -1,0 +1,122 @@
+---
+title: "FishPlot"
+author: "Royce Johnson"
+date: "2024-04-21"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	message = FALSE,
+	warning = FALSE,
+	collapse = TRUE
+)
+```
+```{css, echo=FALSE}
+#TOC::before {
+  content: "";
+  display: block;
+  aspect-ratio: 2;
+  background-image: url("Olympic_rings.png");
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.list-group-item.active{
+    z-index: 5;
+    color: black;
+    background-color: lightgray;
+    border-color: lightgray;
+    font-weight: bolder;
+}
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background: transparent;
+    border: 1px solid #ddd;
+}
+#tocify-header1 {
+    background: dodgerblue;
+    color: white;
+}
+#tocify-header2 {
+    background: gold;
+    color: black;
+}
+#tocify-header3 {
+    background: black;
+    color: white;
+}
+#tocify-header4{
+    background: forestgreen;
+    color: white;
+}
+#tocify-header5{
+    background: crimson;
+    color: white;
+}
+
+
+```
+
+# Intro
+
+I want to show how many years the length of athlete's careers last, and how it has been different between Male and Female athletes over the years.
+
+```{r include=FALSE}
+library(tidyverse)
+library(gghighlight)
+library(readr)
+library(plotly)
+Olympics_Full <- read_csv("C:/Users/deanr/source/repos/DataScienceProject/dataSets/Olympics_Full.csv")
+athletes_total_events <- Olympics_Full %>% 
+  group_by(athlete_id) %>% 
+  summarise(events=n(), sex=first(sex,na_rm = TRUE), year.first=min(year), year.last=max(year)) %>% 
+  filter(!is.na(sex) & (events>0)) %>% 
+  arrange(events) 
+
+events_new_athletes <- athletes_total_events %>% 
+  group_by(year.first, sex) %>% 
+  summarise(athletes=n(), events=mean(events), year.last=mean(year.last)) %>% 
+  arrange(events)
+  
+```
+
+# Fish plot 1
+
+```{r, fig.width=12}
+plot1 <- ggplot(athletes_total_events, aes(y=events, color=sex)) +
+  geom_segment(aes(y=0, 
+               yend=events,
+               x=year.first, 
+               xend=year.last),
+               linewidth=0.5)
+
+plot1
+```
+
+# Fish plot 2
+
+```{r, fig.width=12}
+plot2 <- ggplot(events_new_athletes, aes(y=events, color=sex)) +
+  geom_segment(aes(y=0,
+                   yend=events,
+                   x=year.first,
+                   xend=year.last),
+               linewidth=1)
+plot2
+```
+
+# Bar chart
+
+```{r,fig.width=12}
+plot3 <- ggplot(events_new_athletes) +
+  geom_bar(aes(x=year.first, weight=events, color=sex, fill=sex), position = position_dodge())
+
+ggplotly(plot3)
+```
